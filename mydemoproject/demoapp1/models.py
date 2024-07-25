@@ -27,7 +27,7 @@ class CustomUser(AbstractUser, BaseModel):
                               validators=[validate_email])
     phone_number = models.CharField(max_length=100, unique=True)
     username = models.CharField(max_length=100, blank=True, null=True)
-    USERNAME_FIELD = 'phone_number'  # unique id
+    USERNAME_FIELD = 'email'  # unique id
     REQUIRED_FIELDS = ['username']
 
     def __str__(self):
