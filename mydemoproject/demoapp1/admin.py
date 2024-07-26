@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Book, BorrowedBook, Inventory
+from .models.inventory import Inventory, Book
+from .models.borrowed_book import BorrowedBook
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -25,10 +26,9 @@ class BorrowedBookAdmin(admin.ModelAdmin):
 
 
 class InventoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'book', 'total_books')
+    list_display = ('inventory_id', 'book', 'total_books')
     search_fields = ('book__book_name',)
     list_filter = ('total_books',)
-
 
 
 admin.site.register(User, UserAdmin)

@@ -27,8 +27,11 @@ SECRET_KEY = 'django-insecure-%!@d82d7e57+mnvy_r4*)0!g=o#!4-!)073%qoy$+cf#hq69mb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# A list of strings representing the host/domain names that
+# this Django site can serve. Empty = localhost allowed only
 ALLOWED_HOSTS = []
 
+# which user model to use
 AUTH_USER_MODEL = 'demoapp1.CustomUser'
 
 # Application definition
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     'demoapp1'
 ]
 
+# add security header for securing the request repose csrf etc
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,6 +57,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# first one is prefered but if not avaialbel then next ones
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',  # Argon2
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',  # PBKDF2
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',  # PBKDF2 with SHA1
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',  # BCrypt + SHA256
+    'django.contrib.auth.hashers.ScryptPasswordHasher',  # Scrypt
+]
+
+# Indicates the Python module where the URL configuration
+# for this Django project is defined.
 ROOT_URLCONF = 'mydemoproject.urls'
 
 TEMPLATES = [
@@ -116,6 +131,8 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# USE_I18N: Whether to enable Django translation system.
+# USE_TZ: Whether to use timezone-aware datetimes.
 USE_I18N = True
 
 USE_TZ = True
