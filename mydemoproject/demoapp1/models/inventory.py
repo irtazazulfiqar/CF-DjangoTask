@@ -10,9 +10,9 @@ class Inventory(BaseModel):
     total_books = models.IntegerField(validators=[MinValueValidator(0)])
     book = models.OneToOneField(Book, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.book.book_name}: {self.total_books} books available"
+    
     @staticmethod
     def get_total_books(bk):
         return Inventory.get_all().get(book=bk).total_books
-
-    def __str__(self):
-        return f"{self.book.book_name}: {self.total_books} books available"

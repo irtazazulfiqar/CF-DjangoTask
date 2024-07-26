@@ -21,6 +21,9 @@ class BorrowedBook(BaseModel):
     borrow_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True)
 
+    def __str__(self):
+        return f"{self.user.username} borrowed {self.book.book_name}"
+
     @classmethod
     def can_borrow_book(cls, user, book):
         if cls.get_all().filter(user=user, book=book,
@@ -59,5 +62,3 @@ class BorrowedBook(BaseModel):
         return BorrowedBook.get_all().filter(book=book,
                                              return_date__isnull=True).count()
 
-    def __str__(self):
-        return f"{self.user.username} borrowed {self.book.book_name}"
