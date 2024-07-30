@@ -8,10 +8,9 @@ from .inventory import Inventory
 
 class BorrowedBook(BaseModel):
     """
-        if user is deleted then its associated entries must also be deleted
-        I.E only those whose return dates are null
-        because of data inconsistency, what if user borrowed a book and never
-        returned it, we don't want these kind of entries in our db
+    If a user is deleted, their associated borrowed book entries with a null return date
+    must also be deleted. This is to prevent data inconsistency where a user has borrowed
+    a book but never returned it. We don't want such entries in our database.
     """
 
     borrow_id = models.AutoField(primary_key=True)
@@ -28,37 +27,32 @@ class BorrowedBook(BaseModel):
     def can_borrow_book(cls, user, book):
         if cls.get_all().filter(user=user, book=book,
                                 return_date__isnull=True).exists():
-            return False, ("Book can't be borrowed, you already "
-                           "haven't returned the previous one")
+            return False, ("You already have borrowed this book"
+                           "previously and haven't returned it yet.")
         return True, "Book can be borrowed"
 
     @classmethod
-    def add_entry(cls, user, book):
+    def add_borrowed_book(cls, user, book):
 
+        available, message = Inventory.available_count(book)
+        if not available:
+            return False, message
+
+        can_borrow, message = cls.can_borrow_book(user, book)
+        if not can_borrow:
+            return False, message
+
+        # removed addEntry() and embedded it here
         borrowed_book = cls(
             user=user,
             book=book,
             borrow_date=timezone.now().date(),
         )
         borrowed_book.save()
-        return True, borrowed_book
 
-    @classmethod
-    def add_borrowed_book(cls, user, book):
-
-        if Inventory.get_total_books(book) - cls.get_borrowed_books(book) <= 0:
-            return False, "No available copies to borrow"
-
-        can_borrow, message = cls.can_borrow_book(user, book)
-        if not can_borrow:
-            return False, message
-
-        success, result = cls.add_entry(user, book)
-
-        return success, result
+        return True, "Added Successfully"
 
     @classmethod
     def get_borrowed_books(cls, book):
         return BorrowedBook.get_all().filter(book=book,
                                              return_date__isnull=True).count()
-

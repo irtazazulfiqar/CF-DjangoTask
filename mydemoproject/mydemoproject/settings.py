@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 import pymysql
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%!@d82d7e57+mnvy_r4*)0!g=o#!4-!)073%qoy$+cf#hq69mb'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,11 +100,11 @@ WSGI_APPLICATION = 'mydemoproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'demodb',  # Replace with your actual database name
-        'USER': 'root',  # Replace with your new MySQL username
-        'PASSWORD': '12345678',  # Replace with your new MySQL password
-        'HOST': 'localhost',  # The host of your MySQL server
-        'PORT': '3306',  # The port of your MySQL server
+        'NAME': os.getenv('DB_NAME'),  # Replace with your actual database name
+        'USER': os.getenv('DB_USER'),  # Replace with your new MySQL username
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # Replace with your new MySQL password
+        'HOST': os.getenv('DB_HOST'),  # The host of your MySQL server
+        'PORT': os.getenv('DB_PORT'),  # The port of your MySQL server
     }
 }
 

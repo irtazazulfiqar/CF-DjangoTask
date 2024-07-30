@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_email
 from django.db import models
@@ -20,16 +20,21 @@ class CustomUser(AbstractUser, BaseModel):
         return self.phone_number
 
     @classmethod
-    def check_if_user_registered(cls, email):
+    def by_email(cls, email):
         return cls.filter_objects(email=email).exists()
 
     @classmethod
     def add_user(cls, email, phone_number, password, **extra_fields):
-        if not cls.check_if_user_registered(email):
+        if cls.by_email(email):
+            raise ValidationError('User already exists')
+
+        # We have to put else otherwise it will give warning
+        # of code unreachable
+        else:
             """
-                instead of creating this object we can also call UserManager
-                create user function but i dont know whether it is optimal 
-                or not
+            Instead of creating this object we can also call UserManager
+            create user function but i dont know whether it is optimal 
+            or not
             """
             user = cls(
                 email=email,
@@ -40,16 +45,18 @@ class CustomUser(AbstractUser, BaseModel):
 
             user.save()
             return user
-        else:
-            raise ValidationError('User already exists')
 
     @classmethod
     def login(cls, email, password):
         try:
-            user = cls.filter_objects(email=email).first()
-            if user and check_password(password, user.password):
+            user = cls.objects.get(email=email)
+            if check_password(password, user.password):
                 return user
             else:
                 raise ValidationError('Invalid credentials')
-        except:
+        except ObjectDoesNotExist:
             raise ValidationError('User does not exist')
+        except ValidationError as e:
+            raise e
+        except Exception as e:
+            raise ValidationError(f'An unexpected error occurred: {str(e)}')

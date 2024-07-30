@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from ._helper.base_model import BaseModel
 
@@ -24,22 +25,23 @@ class Book(BaseModel):
     """
 
     @classmethod
-    def check_book_existence(cls, b_name, aut_name, book_pk):
-        if (cls.get_all().filter(book_name=b_name,
-                                  author_name=aut_name).
-                exclude(pk=book_pk).exists()):
+    def check_book_existence(cls, b_name, aut_name):
+        try:
+            cls.get_all().get(book_name=b_name, author_name=aut_name)
             return True
 
-        return False
+        except ObjectDoesNotExist:
+            return False
 
     @classmethod
     def add_book(cls, b_name, aut_name, **extra_fields):
-        book = cls(
+
+        if not cls.check_book_existence(b_name, aut_name):
+            book = cls(
                 book_name=b_name,
                 author_name=aut_name,
                 **extra_fields
-        )
-        if not cls.check_book_existence(b_name, aut_name, book.book_id):
+            )
             book.save()
             return True, book
 
