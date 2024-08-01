@@ -22,16 +22,17 @@ from .views import (
     BookCreateView, BorrowReturnView)
 
 urlpatterns = [
+
     # paths of book
     path('books/', BookListView.as_view(), name='show_book'),
-    path('books/edit/<int:book_id>/', BookUpdateView.as_view(), name='edit_book'),
-    path('books/delete/<int:book_id>/', BookDeleteView.as_view(), name='delete_book'),
+    path('books/<int:book_id>/edit/', BookUpdateView.as_view(), name='edit_book'),
+    path('books/<int:book_id>/delete/', BookDeleteView.as_view(), name='delete_book'),
     path('books/add/', BookCreateView.as_view(), name='add_book'),
 
     # paths of users
     path('users/', UserListView.as_view(), name='show_user'),
-    path('users/edit/<int:user_id>/', UserUpdateView.as_view(), name='edit_user'),
-    path('users/delete/<int:user_id>/', UserDeleteView.as_view(), name='delete_user'),
+    path('users/<int:user_id>/edit/', UserUpdateView.as_view(), name='edit_user'),
+    path('users/<int:user_id>/delete/', UserDeleteView.as_view(), name='delete_user'),
 
     # paths of inventory
     path('inventory/', InventoryListView.as_view(), name='show_inventory'),

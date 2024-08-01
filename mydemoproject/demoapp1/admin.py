@@ -26,7 +26,6 @@ class BorrowedBookAdmin(admin.ModelAdmin):
     ordering = ('-borrow_dttm',)
 
 
-
 class InventoryAdmin(admin.ModelAdmin):
     list_display = ('inventory_id', 'book', 'total_books')
     search_fields = ('book__book_name',)

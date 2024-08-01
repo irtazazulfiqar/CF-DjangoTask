@@ -31,31 +31,32 @@ class CustomUser(AbstractUser, BaseModel):
         if cls.by_email(email):
             return False, "User already exists"
         if cls.by_phone(phone_number):
-            return False, "Phone-Number already registered"
+            return False, "Phone-number already registered"
 
-        else:
-            """
-            Instead of creating this object we can also call UserManager
-            create user function but i dont know whether it is optimal 
-            or not
-            """
-            user = cls(
+        """
+        Instead of creating this object we can also call UserManager
+        create user function but i dont know whether it is optimal 
+        or not
+        """
+        user = cls(
                 email=email,
                 phone_number=phone_number,
                 password=make_password(password),
                 **extra_fields
-            )
+        )
 
-            user.save()
-            return True, user
+        user.save()
+        return True, user
 
     @classmethod
     def login(cls, email, password):
         user = cls.objects.filter(email=email).first()
-        if user:
-            if check_password(password, user.password):
-                return True, "Login successful"
-            else:
-                return False, "Invalid credentials"
-        else:
+
+        if not user:
             return False, "User does not exist"
+
+        if not check_password(password, user.password):
+            return False, "Invalid credentials"
+
+        return True, "Valid Credentials"
+

@@ -115,7 +115,7 @@ class InventoryListView(ListView):
 
         for inventory_item in inventory_items:
             borrowed_count = (BorrowedBook.
-                              get_borrowed_books(inventory_item.book.book_id))
+                              get_borrowed_books_count(inventory_item.book.book_id))
             inventory_with_borrowed.append({
                 'inventory': inventory_item,
                 'borrowed_count': borrowed_count
@@ -137,7 +137,7 @@ class BorrowReturnView(TemplateView):
         context['inventory_with_borrowed'] = [
             {
                 'inventory': inv,
-                'borrowed_count': BorrowedBook.get_borrowed_books(inv.book)
+                'borrowed_count': BorrowedBook.get_borrowed_books_count(inv.book)
             }
             for inv in Inventory.objects.all()
         ]

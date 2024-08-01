@@ -26,6 +26,10 @@ class BorrowedBook(BaseModel):
 
     @classmethod
     def can_borrow_book(cls, user_id, book_id):
+        available, message = Inventory.available_count(book_id)
+        if not available:
+            return False, message
+
         if cls.objects.filter(user_id=user_id, book_id=book_id,
                               return_dttm__isnull=True).exists():
             return False, "Can't borrow book, Return previous one."
@@ -34,10 +38,6 @@ class BorrowedBook(BaseModel):
 
     @classmethod
     def add_borrowed_book(cls, user, book):
-        available, message = Inventory.available_count(book)
-        if not available:
-            return False, message
-
         can_borrow, message = cls.can_borrow_book(user, book)
         if not can_borrow:
             return False, message
@@ -52,7 +52,7 @@ class BorrowedBook(BaseModel):
         return True, "Added Successfully"
 
     @classmethod
-    def get_borrowed_books(cls, book_id):
+    def get_borrowed_books_count(cls, book_id):
         return cls.objects.filter(book_id=book_id,
                                   return_dttm__isnull=True).count()
 

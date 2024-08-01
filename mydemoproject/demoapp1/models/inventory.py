@@ -19,10 +19,13 @@ class Inventory(BaseModel):
         if inventory:
             return True, inventory.total_books
         else:
-            return False, -1
+            return False, "Book is not in the inventory."
 
     @classmethod
     def add_inventory(cls, book, total_books):
+        if total_books < 0:
+            return False
+
         inventory = cls(
             total_books=total_books,
             book=book
@@ -33,11 +36,11 @@ class Inventory(BaseModel):
     @classmethod
     def available_count(cls, book_id):
         from .borrowed_book import BorrowedBook
-        status, total_books = cls.get_total_books(book_id)
+        status, data = cls.get_total_books(book_id)
         if not status:
-            return False, "No Inventory-Entry Exists for the Book"
+            return False, data
 
-        if total_books - BorrowedBook.get_borrowed_books(book_id) < 1:
+        if data - BorrowedBook.get_borrowed_books_count(book_id) < 1:
             return False, "No available copies to borrow"
         return True, "Success"
 
