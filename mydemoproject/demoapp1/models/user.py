@@ -1,5 +1,4 @@
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_email
 from django.db import models
@@ -24,12 +23,16 @@ class CustomUser(AbstractUser, BaseModel):
         return cls.filter_objects(email=email).exists()
 
     @classmethod
+    def by_phone(cls, phone_number):
+        return cls.filter_objects(phone_number=phone_number).exists()
+
+    @classmethod
     def add_user(cls, email, phone_number, password, **extra_fields):
         if cls.by_email(email):
-            raise ValidationError('User already exists')
+            return False, "User already exists"
+        if cls.by_phone(phone_number):
+            return False, "Phone-Number already registered"
 
-        # We have to put else otherwise it will give warning
-        # of code unreachable
         else:
             """
             Instead of creating this object we can also call UserManager
@@ -44,19 +47,15 @@ class CustomUser(AbstractUser, BaseModel):
             )
 
             user.save()
-            return user
+            return True, user
 
     @classmethod
     def login(cls, email, password):
-        try:
-            user = cls.objects.get(email=email)
+        user = cls.objects.filter(email=email).first()
+        if user:
             if check_password(password, user.password):
-                return user
+                return True, "Login successful"
             else:
-                raise ValidationError('Invalid credentials')
-        except ObjectDoesNotExist:
-            raise ValidationError('User does not exist')
-        except ValidationError as e:
-            raise e
-        except Exception as e:
-            raise ValidationError(f'An unexpected error occurred: {str(e)}')
+                return False, "Invalid credentials"
+        else:
+            return False, "User does not exist"

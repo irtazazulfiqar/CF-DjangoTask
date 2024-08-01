@@ -17,25 +17,19 @@ class Book(BaseModel):
     def __str__(self):
         return self.book_name
 
+    @classmethod
+    def check_book_existence(cls, book_name, auth_name):
+        return cls.objects.filter(book_name=book_name, author_name=auth_name).exists()
+
     """
-        we done need extra field but if we expand 
+        we do not need an extra field but if we expand 
         our system and add some new attributes to
-        this model we will not have to change 
+        this model, we will not have to change 
         add_book function
     """
 
     @classmethod
-    def check_book_existence(cls, b_name, aut_name):
-        try:
-            cls.get_all().get(book_name=b_name, author_name=aut_name)
-            return True
-
-        except ObjectDoesNotExist:
-            return False
-
-    @classmethod
     def add_book(cls, b_name, aut_name, **extra_fields):
-
         if not cls.check_book_existence(b_name, aut_name):
             book = cls(
                 book_name=b_name,
@@ -46,5 +40,4 @@ class Book(BaseModel):
             return True, book
 
         else:
-            return False, ("Cant add book because it already exists "
-                           "for that particular author name")
+            return False, "Can't add already existing book."

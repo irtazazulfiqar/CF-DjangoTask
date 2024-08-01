@@ -1,0 +1,81 @@
+{% extends "basic.html" %}
+
+{% block content %}
+<head>
+    <title>Manage Inventory</title>
+</head>
+
+<section>
+
+    <h2>Manage Inventory</h2>
+
+    <!-- Borrow Book Form -->
+    <form method="post" action="{% url 'borrow_book' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="borrow">
+        <label for="userid-dropdown">User ID:</label>
+        <select id="userid-dropdown" name="userid" >
+            {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+        <label for="bookid-dropdown">Book ID:</label>
+        <select id="bookid-dropdown" name="bookid" required>
+            {% for book in books %}
+                <option value="{{ book.book_id }}">{{ book.book_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Borrow Book</button>
+    </form>
+
+    <!-- Return Book Form -->
+    <form method="post" action="{% url 'return_book' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="return">
+        <label for="userid-dropdown-return">User ID:</label>
+        <select id="userid-dropdown-return" name="userid" >
+            {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+        <label for="bookid-dropdown-return">Book ID:</label>
+        <select id="bookid-dropdown-return" name="bookid" >
+            {% for book in books %}
+                <option value="{{ book.book_id }}">{{ book.book_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Return Book</button>
+    </form>
+
+    <!-- Display messages -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Inventory Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Book Name</th>
+                <th>Total Books</th>
+                <th>Borrowed Books</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventory_with_borrowed %}
+            <tr>
+                <td>{{ item.inventory.book.book_name }}</td>
+                <td>{{ item.inventory.total_books }}</td>
+                <td>{{ item.borrowed_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

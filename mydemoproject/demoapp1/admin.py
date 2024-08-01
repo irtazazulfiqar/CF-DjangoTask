@@ -19,10 +19,12 @@ class BookAdmin(admin.ModelAdmin):
 
 
 class BorrowedBookAdmin(admin.ModelAdmin):
-    list_display = ('borrow_id', 'user', 'book', 'borrow_date', 'return_date')
+    list_display = ('borrow_id', 'user', 'book', 'borrow_dttm', 'return_dttm')
     search_fields = ('user__username', 'book__book_name')
-    list_filter = ('borrow_date', 'return_date')
+    list_filter = ('borrow_dttm', 'return_dttm')
     autocomplete_fields = ['user', 'book']
+    ordering = ('-borrow_dttm',)
+
 
 
 class InventoryAdmin(admin.ModelAdmin):

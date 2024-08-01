@@ -1,0 +1,34 @@
+{% extends "basic.html" %}
+
+
+{% block content %}
+
+    <head>
+        <title>Borrowed Books</title>
+    </head>
+
+    <section>
+        <h2>Borrowed Books</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Book Name</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for borrowed_book in borrowed_books %}
+                    <tr>
+                        <td>{{ borrowed_book.user.username }}</td>
+                        <td>{{ borrowed_book.book.book_name }}</td>
+                        <td>{{ borrowed_book.borrow_dttm }}</td>
+                        <td>{{ borrowed_book.return_dttm }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </section>
+{% endblock %}
