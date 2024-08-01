@@ -6,27 +6,27 @@ from django.views.generic import (ListView, DeleteView,
 from django.urls import reverse_lazy
 from .models.book import Book
 from .models.inventory import Inventory
-from .models.user import CustomUser
+from .models.user import User
 from .models.borrowed_book import BorrowedBook
 
 
 # ListView for Users
 class UserListView(ListView):
-    model = CustomUser
+    model = User
     template_name = 'demoapp1/users.html'
     context_object_name = 'users'
 
 
 # DeleteView for Users
 class UserDeleteView(DeleteView):
-    model = CustomUser
+    model = User
     success_url = reverse_lazy('show_user')
     pk_url_kwarg = 'user_id'
 
 
 # UpdateView for User
 class UserUpdateView(UpdateView):
-    model = CustomUser
+    model = User
     fields = ['username', 'email']
     template_name = 'demoapp1/edit_form.html'
     context_object_name = 'user'
@@ -122,7 +122,7 @@ class InventoryListView(ListView):
             })
 
         context['inventory_with_borrowed'] = inventory_with_borrowed
-        context['users'] = CustomUser.objects.all()
+        context['users'] = User.objects.all()
         context['books'] = Book.objects.all()
         return context
 
@@ -132,7 +132,7 @@ class BorrowReturnView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['users'] = CustomUser.objects.all()
+        context['users'] = User.objects.all()
         context['books'] = Book.objects.all()
         context['inventory_with_borrowed'] = [
             {
@@ -162,7 +162,7 @@ class BorrowReturnView(TemplateView):
 
     def return_borrow_book(self, request, user_id, book_id, choice):
 
-        user = CustomUser.objects.get(user_id=user_id)
+        user = User.objects.get(user_id=user_id)
         book = Book.objects.get(book_id=book_id)
 
         if choice:

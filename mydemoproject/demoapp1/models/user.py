@@ -5,7 +5,7 @@ from django.db import models
 from ._helper.base_model import BaseModel
 
 
-class CustomUser(AbstractUser, BaseModel):
+class User(AbstractUser, BaseModel):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=45, unique=True,
                               validators=[validate_email])

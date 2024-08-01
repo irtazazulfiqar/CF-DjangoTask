@@ -26,6 +26,10 @@ class Inventory(BaseModel):
         if total_books < 0:
             return False
 
+        success, data = cls.get_total_books(book.book_id)
+        if not success:
+            return False
+
         inventory = cls(
             total_books=total_books,
             book=book

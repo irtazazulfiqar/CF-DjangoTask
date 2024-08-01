@@ -3,7 +3,7 @@ from .inventory import Inventory
 from django.db import models
 from django.utils import timezone
 from ._helper.base_model import BaseModel
-from .user import CustomUser
+from .user import User
 from .book import Book
 
 
@@ -15,7 +15,7 @@ class BorrowedBook(BaseModel):
     """
 
     borrow_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='borrowed_books')
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrow_dttm = models.DateTimeField(default=timezone.now)
