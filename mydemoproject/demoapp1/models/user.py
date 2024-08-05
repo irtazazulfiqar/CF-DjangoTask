@@ -36,7 +36,7 @@ class User(AbstractUser, BaseModel):
         """
         Instead of creating this object we can also call UserManager
         create user function but i dont know whether it is optimal 
-        or not
+        or not.
         """
         user = cls(
                 email=email,

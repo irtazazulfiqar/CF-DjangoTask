@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from ._helper.base_model import BaseModel
 
@@ -22,18 +21,18 @@ class Book(BaseModel):
         return cls.objects.filter(book_name=book_name, author_name=auth_name).exists()
 
     @classmethod
-    def add_book(cls, b_name, aut_name, **extra_fields):
+    def add_book(cls, book_name, auth_name, **extra_fields):
         """
-            we do not need an extra field but if we expand
+            We do not need an extra field but if we expand
             our system and add some new attributes to
             this model, we will not have to change
-            add_book function
+            add_book function.
         """
 
-        if not cls.check_book_existence(b_name, aut_name):
+        if not cls.check_book_existence(book_name, auth_name):
             book = cls(
-                book_name=b_name,
-                author_name=aut_name,
+                book_name=book_name,
+                author_name=auth_name,
                 **extra_fields
             )
             book.save()

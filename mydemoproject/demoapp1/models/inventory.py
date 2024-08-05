@@ -27,7 +27,9 @@ class Inventory(BaseModel):
             return False
 
         success, data = cls.get_total_books(book.book_id)
-        if not success:
+
+        # We will return False because, book already exists
+        if success:
             return False
 
         inventory = cls(
