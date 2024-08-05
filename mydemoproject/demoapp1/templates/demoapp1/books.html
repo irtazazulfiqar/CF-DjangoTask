@@ -1,0 +1,67 @@
+{% extends "basic.html" %}
+
+{% block content %}
+<head>
+    <title>Books Page</title>
+</head>
+<section>
+    <h2>Manage Books</h2>
+
+    <!-- Display messages -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'add_book' %}">
+        {% csrf_token %}
+        <label for="bookname">Book Name:</label>
+        <input type="text" id="bookname" name="book_name" placeholder="Book Name" required>
+
+        <label for="authorname">Author Name:</label>
+        <input type="text" id="authorname" name="author_name" placeholder="Author Name" required>
+
+        <label for="quantity">Book Quantity:</label>
+        <input type="number" id="quantity" name="book_quantity" placeholder="Quantity" required min="0">
+
+
+        <button type="submit" id="addbook">Add Book</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Author Name</th>
+                <th>Book Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.book_id }}</td>
+                <td>{{ book.book_name }}</td>
+                <td>{{ book.author_name }}</td>
+                <td>{{ book.inventory.total_books }}</td>
+                <td>
+                    <form method="post" action="{% url 'delete_book' book.book_id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+                    <form method="get" action="{% url 'edit_book' book.book_id %}" style="display:inline;">
+                        <button type="submit">Edit</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

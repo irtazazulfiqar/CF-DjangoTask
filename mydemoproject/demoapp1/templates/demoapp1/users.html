@@ -1,0 +1,38 @@
+{% extends "basic.html" %}
+
+{% block content %}
+<head>
+    <title>Manage Users</title>
+</head>
+<section>
+    <h2>Manage Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+           {% for user in users %}
+                <tr>
+                    <td>{{ user.user_id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <form method="post" action="{% url 'delete_user' user.user_id %}">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                        <form method="get" action="{% url 'edit_user' user.user_id %}" style="display:inline;">
+                            <button type="submit">Edit</button>
+                        </form>
+                    </td>
+                </tr>
+           {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

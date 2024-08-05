@@ -1,0 +1,27 @@
+<!-- first we imports the static tag library.-->
+{% load static %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'common.css' %}">
+        <title>{% block title %}My Application{% endblock %}</title>
+    </head>
+    <body>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'show_book' %}">Manage Books</a>
+            <a href="{% url 'show_user' %}">Manage Users</a>
+            <a href="{% url 'show_inventory' %}">Manage Inventory</a>
+            <a href="{% url 'show_borrowed' %}">Borrowed Books</a>
+        </nav>
+
+        <section>
+            {% block content %}
+            {% endblock %}
+        </section>
+            {% block modal_content %}
+            {% endblock %}
+    </body>
+</html>

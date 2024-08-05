@@ -14,13 +14,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from . import views
+from django.urls import path
+from .views import (
+    BookListView, UserListView, InventoryListView, BorrowedBookListView,
+    UserDeleteView, UserUpdateView,
+    BookUpdateView, BookDeleteView,
+    BookCreateView, BorrowReturnView)
 
 urlpatterns = [
-    path('books/' , views.show_books, name='show_book'),
-    path('users/' , views.show_users, name='show_user'),
-    path('inventory/' , views.show_inventory, name='show_inventory'),
-    path('borrowed/' , views.show_borrowed, name='show_borrowed'),
+
+    # paths of book
+    path('books/', BookListView.as_view(), name='show_book'),
+    path('books/<int:book_id>/edit/', BookUpdateView.as_view(), name='edit_book'),
+    path('books/<int:book_id>/delete/', BookDeleteView.as_view(), name='delete_book'),
+    path('books/add/', BookCreateView.as_view(), name='add_book'),
+
+    # paths of users
+    path('users/', UserListView.as_view(), name='show_user'),
+    path('users/<int:user_id>/edit/', UserUpdateView.as_view(), name='edit_user'),
+    path('users/<int:user_id>/delete/', UserDeleteView.as_view(), name='delete_user'),
+
+    # paths of inventory
+    path('inventory/', InventoryListView.as_view(), name='show_inventory'),
+    path('inventory/borrow/', BorrowReturnView.as_view(), name='borrow_book'),
+    path('inventory/return/', BorrowReturnView.as_view(), name='return_book'),
+
+    path('borrowed/', BorrowedBookListView.as_view(), name='show_borrowed'),
 ]
