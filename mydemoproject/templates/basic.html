@@ -1,4 +1,3 @@
-<!-- first we imports the static tag library.-->
 {% load static %}
 
 <html lang="en">
@@ -15,6 +14,11 @@
             <a href="{% url 'show_user' %}">Manage Users</a>
             <a href="{% url 'show_inventory' %}">Manage Inventory</a>
             <a href="{% url 'show_borrowed' %}">Borrowed Books</a>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <span><button type="submit">Logout</button></span>
+
+                </form>
         </nav>
 
         <section>

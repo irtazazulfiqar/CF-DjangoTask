@@ -1,37 +1,54 @@
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q
+from django.shortcuts import redirect, render
 from django.views.generic import (ListView, DeleteView,
                                   UpdateView, CreateView,
                                   TemplateView)
 from django.urls import reverse_lazy
+
+from .forms.user_form import UserForm
 from .models.book import Book
 from .models.inventory import Inventory
 from .models.user import User
 from .models.borrowed_book import BorrowedBook
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # ListView for Users
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'demoapp1/users.html'
     context_object_name = 'users'
 
 
 # DeleteView for Users
-class UserDeleteView(DeleteView):
+class UserDeleteView(DeleteView, LoginRequiredMixin):
     model = User
     success_url = reverse_lazy('show_user')
     pk_url_kwarg = 'user_id'
 
 
 # UpdateView for User
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     fields = ['username', 'email']
     template_name = 'demoapp1/edit_form.html'
     context_object_name = 'user'
     success_url = reverse_lazy('show_user')
     pk_url_kwarg = 'user_id'
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+
+        # Check if email exists for another user
+        if User.objects.filter(email=email):
+            form.add_error('email', 'A user with this email already exists.')
+            return self.form_invalid(form)
+
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -41,7 +58,7 @@ class UserUpdateView(UpdateView):
 
 
 # ListView for Books
-class BookListView(ListView):
+class BookListView(LoginRequiredMixin,ListView):
     model = Book
     template_name = 'demoapp1/books.html'
     context_object_name = 'books'
@@ -94,6 +111,12 @@ class BookUpdateView(UpdateView):
         context['edit_url'] = 'edit_book'
         return context
 
+    def form_invalid(self, form):
+        # it will catch the model uniqueness errors (model cant have
+        # entry with same author_name and book_name)
+        print(form.errors)
+        return super().form_invalid(form)
+
 
 # DeleteView for Books
 class BookDeleteView(DeleteView):
@@ -103,7 +126,7 @@ class BookDeleteView(DeleteView):
 
 
 # ListView for Inventory
-class InventoryListView(ListView):
+class InventoryListView(LoginRequiredMixin, ListView):
     model = Inventory
     template_name = 'demoapp1/inventory.html'
     context_object_name = 'inventory_with_borrowed'
@@ -160,6 +183,7 @@ class BorrowReturnView(TemplateView):
             messages.error(request, "Invalid action.")
             return redirect('show_inventory')
 
+
     def return_borrow_book(self, request, user_id, book_id, choice):
 
         user = User.objects.get(user_id=user_id)
@@ -179,8 +203,38 @@ class BorrowReturnView(TemplateView):
 
 
 # ListView for Borrowed Books
-class BorrowedBookListView(ListView):
+class BorrowedBookListView(LoginRequiredMixin, ListView):
     model = BorrowedBook
     template_name = 'demoapp1/borrowed.html'
     context_object_name = 'borrowed_books'
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            # Redirect to home page after successful signup
+            return redirect('home')
+    else:
+        form = UserForm()
+    return render(request, 'demoapp1/auth_form.html', {'form': form,
+                                                       'is_signup': True})
+
+
+def signin(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'demoapp1/auth_form.html', {'form': form,
+                                                       'is_signup': False})
+
 
