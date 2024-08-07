@@ -1,3 +1,4 @@
+from datetime import timedelta
 
 from .inventory import Inventory
 from django.db import models
@@ -20,9 +21,15 @@ class BorrowedBook(BaseModel):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrow_dttm = models.DateTimeField(default=timezone.now)
     return_dttm = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} borrowed {self.book.book_name}"
+
+    def save(self, *args, **kwargs):
+        if not self.due_date:
+            self.due_date = self.borrow_dttm + timedelta(weeks=1)
+        super().save(*args, **kwargs)
 
     @classmethod
     def can_borrow_book(cls, user_id, book_id):

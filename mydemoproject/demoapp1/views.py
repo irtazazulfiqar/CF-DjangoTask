@@ -1,8 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import (ListView, DeleteView,
                                   UpdateView, CreateView,
@@ -182,7 +180,6 @@ class BorrowReturnView(TemplateView):
         else:
             messages.error(request, "Invalid action.")
             return redirect('show_inventory')
-
 
     def return_borrow_book(self, request, user_id, book_id, choice):
 
