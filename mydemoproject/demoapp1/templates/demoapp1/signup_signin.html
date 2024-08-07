@@ -1,8 +1,8 @@
-{%load static%}
+{% load static %}
 <html>
 <head>
     <title>{% if is_signup %}Signup{% else %}Signin{% endif %}</title>
-    <link rel="stylesheet" href="{% static 'auth.css' %}">
+    <link rel="stylesheet" href="{% static 'signup_signin.css' %}">
 </head>
 <body>
     <div class="container">
@@ -13,6 +13,10 @@
                 {{ form.as_p }}
             </div>
             <button type="submit">{% if is_signup %}Signup{% else %}Signin{% endif %}</button>
+            <br>
+            <a href="{% if is_signup %}{% url 'signin' %}{% else %}{% url 'signup' %}{% endif %}" class="btn-link">
+                {% if is_signup %}Signin{% else %}Signup{% endif %}
+            </a>
         </form>
     </div>
 </body>

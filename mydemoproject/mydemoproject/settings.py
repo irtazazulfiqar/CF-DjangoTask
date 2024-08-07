@@ -131,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Login Url
 # settings.py
-LOGIN_URL = '/mainapp/signin/'
+LOGIN_URL = '/signin/'
 
 
 # Internationalization
