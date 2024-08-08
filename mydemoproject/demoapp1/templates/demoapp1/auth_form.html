@@ -1,0 +1,19 @@
+{%load static%}
+<html>
+<head>
+    <title>{% if is_signup %}Signup{% else %}Signin{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'auth.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>{% if is_signup %}Signup{% else %}Signin{% endif %}</h2>
+        <form method="post" action="{% if is_signup %}{% url 'signup' %}{% else %}{% url 'signin' %}{% endif %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit">{% if is_signup %}Signup{% else %}Signin{% endif %}</button>
+        </form>
+    </div>
+</body>
+</html>

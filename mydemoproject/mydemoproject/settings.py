@@ -129,6 +129,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Login Url
+# settings.py
+LOGIN_URL = '/signin/'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
