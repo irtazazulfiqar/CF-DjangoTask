@@ -22,6 +22,7 @@ from .views.borrowed import *
 from .views.user import *
 from .views.signup_signin import *
 
+
 urlpatterns = [
     path('signup/', signup, name='signup'),
     path('', signin, name='signin'),
@@ -43,6 +44,14 @@ urlpatterns = [
     path('inventory/borrow/', BorrowReturnView.as_view(), name='borrow_book'),
     path('inventory/return/', BorrowReturnView.as_view(), name='return_book'),
 
+    # paths for borrowed books
     path('borrowed/', BorrowedBookListView.as_view(), name='show_borrowed'),
+
+    # paths for user-specific views
+    path('user/books/', UserBookListView.as_view(), name='show_books'),
+
+    # change this when done
+    path('user/borrowed/', UserBorrowedBooksView.as_view(), name='show_borrowed_books'),
+
     path('logout/', LogoutView.as_view(next_page='signin'), name='logout'),
 ]

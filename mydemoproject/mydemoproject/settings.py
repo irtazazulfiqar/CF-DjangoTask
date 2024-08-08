@@ -78,7 +78,10 @@ ROOT_URLCONF = 'mydemoproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [
+            'templates',
+            os.path.join(BASE_DIR, 'demoapp1', 'templates', 'demoapp1'),  # App-level templates
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

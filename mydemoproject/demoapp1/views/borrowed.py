@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.utils.dateparse import parse_date
 from django.views.generic import ListView, TemplateView
 from demoapp1.models.book import Book
 from demoapp1.models.inventory import Inventory
@@ -64,3 +65,35 @@ class BorrowedBookListView(LoginRequiredMixin, ListView):
     model = BorrowedBook
     template_name = 'demoapp1/borrowed.html'
     context_object_name = 'borrowed_books'
+
+
+# All the books borrowed by a user logged in
+
+
+class UserBorrowedBooksView(LoginRequiredMixin, ListView):
+    model = BorrowedBook
+    template_name = 'demoapp1/user_borrowed_books.html'
+    context_object_name = 'borrowed_books'
+
+    def get_queryset(self):
+        # Base queryset for the logged-in user
+        queryset = BorrowedBook.objects.filter(user=self.request.user)
+
+        # Get filter parameters from the GET request
+        author_name = self.request.GET.get('author_name')
+        book_name = self.request.GET.get('book_name')
+
+        # Apply filters based on provided parameters
+        if author_name:
+            queryset = queryset.filter(book__author_name__icontains=author_name)
+        if book_name:
+            queryset = queryset.filter(book__book_name__icontains=book_name)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add context for authors
+        context['authors'] = Book.objects.values_list('author_name', flat=True).distinct()
+        context['book_names'] = Book.objects.values_list('book_name', flat=True).distinct()
+        return context

@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic import (ListView, DeleteView,
                                   UpdateView, CreateView)
@@ -6,16 +7,33 @@ from django.urls import reverse_lazy
 from demoapp1.models.book import Book
 from demoapp1.models.inventory import Inventory
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+
+class BaseBookListView(LoginRequiredMixin, ListView):
+    model = Book
+    context_object_name = 'books'
+    paginate_by = 2
+
+    def get_queryset(self):
+        queryset = Book.objects.select_related('inventory').order_by('book_id')
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(book_name__icontains=query) | Q(author_name__icontains=query)
+            )
+        return queryset
 
 
 # ListView for Books
-class BookListView(LoginRequiredMixin,ListView):
-    model = Book
+class BookListView(BaseBookListView):
     template_name = 'demoapp1/books.html'
-    context_object_name = 'books'
 
-    def get_queryset(self):
-        return Book.objects.select_related('inventory')
+
+class UserBookListView(PermissionRequiredMixin, BaseBookListView):
+    template_name = 'demoapp1/book_list_user.html'
+    permission_required = 'demoapp1.view_book'
+
 
 
 # CreateView for User

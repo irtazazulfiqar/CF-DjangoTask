@@ -12,6 +12,7 @@
                 <th>User ID</th>
                 <th>User Name</th>
                 <th>Email</th>
+                <th>Type</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,6 +22,7 @@
                     <td>{{ user.user_id }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
                     <td>
                         <form method="post" action="{% url 'delete_user' user.user_id %}">
                             {% csrf_token %}

@@ -10,6 +10,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+
             # Redirect to home page after successful signup
             return redirect('home')
     else:
@@ -25,12 +26,20 @@ def signin(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
+
+            if user:
+                if user.role == 'olduser':
+                    form.add_error(None, 'You must register as a new-user first. '
+                                         'Please setup you password.')
+                else:
+                    login(request, user)
+                    if user.role == 'admin':
+                        return redirect('home')
+                    else:
+                        return redirect('show_books')
     else:
         form = AuthenticationForm()
-    return render(request, 'demoapp1/signup_signin.html', {'form': form,
-                                                       'is_signup': False})
+    return render(request, 'demoapp1/signup_signin.html',
+                  {'form': form, 'is_signup': False})
 
 
