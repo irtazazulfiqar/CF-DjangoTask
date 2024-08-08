@@ -26,7 +26,7 @@ def send_borrowed_book_email(sender, instance, created, **kwargs):
         """
 
         # Send email using SendGrid
-        sg = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+        sendgridcall = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = user.email
         subject = f"Borrowed Book: {book.book_name}"
@@ -40,7 +40,5 @@ def send_borrowed_book_email(sender, instance, created, **kwargs):
 
         ssl._create_default_https_context = ssl._create_unverified_context
 
-        response = sg.send(mail)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
+        response = sendgridcall.send(mail)
+
