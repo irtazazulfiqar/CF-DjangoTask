@@ -41,6 +41,3 @@ def send_borrowed_book_email(sender, instance, created, **kwargs):
         ssl._create_default_https_context = ssl._create_unverified_context
 
         response = sg.send(mail)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
