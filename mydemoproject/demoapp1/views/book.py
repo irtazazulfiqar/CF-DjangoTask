@@ -9,6 +9,8 @@ from demoapp1.models.inventory import Inventory
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
+from demoapp1.views.permissions_user import user_only
+
 
 class BaseBookListView(LoginRequiredMixin, ListView):
     model = Book
@@ -26,23 +28,27 @@ class BaseBookListView(LoginRequiredMixin, ListView):
 
 
 # ListView for Books
-class BookListView(BaseBookListView):
+class BookListView(PermissionRequiredMixin, BaseBookListView):
     template_name = 'demoapp1/books.html'
+    permission_required = 'demoapp1.view_book_admin'
 
 
 class UserBookListView(PermissionRequiredMixin, BaseBookListView):
     template_name = 'demoapp1/book_list_user.html'
-    permission_required = 'demoapp1.view_book'
+    permission_required = 'demoapp1.view_book_newuser'
 
+    def dispatch(self, request, *args, **kwargs):
+        return user_only(super().dispatch)(request, *args, **kwargs)
 
 
 # CreateView for User
-class BookCreateView(CreateView):
+class BookCreateView(PermissionRequiredMixin, CreateView):
     model = Book
     fields = ['book_name', 'author_name']
     template_name = 'demoapp1/books.html'
     context_object_name = 'book'
     success_url = reverse_lazy('show_book')
+    permission_required = 'demoapp1.add_book'
 
     def form_valid(self, form):
 
@@ -61,18 +67,19 @@ class BookCreateView(CreateView):
     def form_invalid(self, form):
         # Redirect to books list with error message
         messages.error(self.request,
-                       "Cant add the already existing book")
+                       "Book Already Exists")
         return redirect('show_book')
 
 
 # UpdateView for Books
-class BookUpdateView(UpdateView):
+class BookUpdateView(PermissionRequiredMixin,UpdateView):
     model = Book
     fields = ['book_name', 'author_name']
     template_name = 'demoapp1/edit_form.html'
     context_object_name = 'book'
     success_url = reverse_lazy('show_book')
     pk_url_kwarg = 'book_id'
+    permission_required = 'demoapp1.change_book'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -82,7 +89,9 @@ class BookUpdateView(UpdateView):
 
 
 # DeleteView for Books
-class BookDeleteView(DeleteView):
+class BookDeleteView(PermissionRequiredMixin, DeleteView):
     model = Book
     success_url = reverse_lazy('show_book')
     pk_url_kwarg = 'book_id'
+    permission_required = 'demoapp1.delete_book'
+

@@ -18,7 +18,7 @@ class User(AbstractUser, BaseModel):
                               validators=[validate_email])
     phone_number = models.CharField(max_length=11, unique=True)
     username = models.CharField(max_length=100, blank=True, null=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="newuser")
 
     USERNAME_FIELD = 'email'  # unique id
     REQUIRED_FIELDS = ['username', 'phone_number']

@@ -12,7 +12,7 @@ def signup(request):
             login(request, user)
 
             # Redirect to home page after successful signup
-            return redirect('home')
+            return redirect('show_books')
     else:
         form = UserForm()
     return render(request, 'demoapp1/signup_signin.html', {'form': form,

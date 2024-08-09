@@ -6,6 +6,8 @@ from django.utils import timezone
 from ._helper.base_model import BaseModel
 from .user import User
 from .book import Book
+import os
+
 
 
 class BorrowedBook(BaseModel):
@@ -25,11 +27,6 @@ class BorrowedBook(BaseModel):
 
     def __str__(self):
         return f"{self.user.username} borrowed {self.book.book_name}"
-
-    def save(self, *args, **kwargs):
-        if not self.due_date:
-            self.due_date = self.borrow_dttm + timedelta(weeks=1)
-        super().save(*args, **kwargs)
 
     @classmethod
     def can_borrow_book(cls, user_id, book_id):
@@ -53,6 +50,9 @@ class BorrowedBook(BaseModel):
             user=user,
             book=book,
             borrow_dttm=timezone.now(),
+            due_date=timezone.now() + timedelta(days=float(
+                os.getenv('EMAIL_DAYS')))
+
         )
         borrowed_book.save()
 

@@ -18,14 +18,6 @@
                 {% if is_signup %}Signin{% else %}Signup{% endif %}
             </a>
         </form>
-
-            {% if form.non_field_errors %}
-                <div style="color: red;">
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
     </div>
 </body>
 </html>

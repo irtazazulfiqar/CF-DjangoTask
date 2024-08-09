@@ -1,16 +1,18 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.utils.dateparse import parse_date
 from django.views.generic import ListView, TemplateView
 from demoapp1.models.book import Book
 from demoapp1.models.inventory import Inventory
 from demoapp1.models.user import User
 from demoapp1.models.borrowed_book import BorrowedBook
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
+from demoapp1.views.permissions_user import user_only
 
 
-class BorrowReturnView(TemplateView):
+class BorrowReturnView(PermissionRequiredMixin, TemplateView):
     template_name = 'demoapp1/inventory.html'
+    permission_required = 'demoapp1.change_book'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,19 +63,23 @@ class BorrowReturnView(TemplateView):
 
 
 # ListView for Borrowed Books
-class BorrowedBookListView(LoginRequiredMixin, ListView):
+class BorrowedBookListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = BorrowedBook
     template_name = 'demoapp1/borrowed.html'
     context_object_name = 'borrowed_books'
+    permission_required = 'demoapp1.view_borrowedbook'
 
 
 # All the books borrowed by a user logged in
 
-
-class UserBorrowedBooksView(LoginRequiredMixin, ListView):
+class UserBorrowedBooksView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = BorrowedBook
     template_name = 'demoapp1/user_borrowed_books.html'
     context_object_name = 'borrowed_books'
+    permission_required = 'demoapp1.view_borrowedbook_newuser'
+
+    def dispatch(self, request, *args, **kwargs):
+        return user_only(super().dispatch)(request, *args, **kwargs)
 
     def get_queryset(self):
         # Base queryset for the logged-in user

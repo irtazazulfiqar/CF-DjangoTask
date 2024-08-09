@@ -14,30 +14,41 @@ def send_borrowed_book_email(sender, instance, created, **kwargs):
         book = instance.book
         due_date = instance.due_date
 
-        email_content = f"""
-        Dear {user.username},
-
-        Thank you for borrowing "{book.book_name}" by {book.author_name}.
-
-        You need to return it by {due_date.strftime('%Y-%m-%d')}.
-
-        Best regards,
-        Library Team
+        # HTML content for the email
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Borrowed Book Confirmation</title>
+        </head>
+        <body>
+            <p>Dear {user.username},</p>
+            <p>Thank you for borrowing "<strong>{book.book_name}</strong>" by {book.author_name}.</p>
+            <p>You need to return it by <strong>{due_date.strftime('%Y-%m-%d')}</strong>.</p>
+            <p>Best regards,<br>
+            Library Team</p>
+            <p><img src="https://feji.us/ngrv2f" alt="Library Logo" style="width: 150px; height: auto;"></p>
+        </body>
+        </html>
         """
 
         # Send email using SendGrid
-        sg = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+        sendgrid_client = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = user.email
         subject = f"Borrowed Book: {book.book_name}"
 
-        mail = Mail(from_email, to_email, subject, email_content)
+        mail = Mail(
+            from_email=from_email,
+            to_emails=to_email,
+            subject=subject,
+            html_content=html_content
+        )
 
-        """
-            We need to disable SSL verification otherwise it will perform 
-            SSL verification
-        """
-
+        # Disable SSL verification if needed
         ssl._create_default_https_context = ssl._create_unverified_context
 
-        response = sg.send(mail)
+        # Send the email
+        response = sendgrid_client.send(mail)
+
