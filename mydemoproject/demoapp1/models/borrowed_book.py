@@ -1,3 +1,4 @@
+from datetime import timedelta
 
 from .inventory import Inventory
 from django.db import models
@@ -5,6 +6,8 @@ from django.utils import timezone
 from ._helper.base_model import BaseModel
 from .user import User
 from .book import Book
+import os
+
 
 
 class BorrowedBook(BaseModel):
@@ -20,6 +23,7 @@ class BorrowedBook(BaseModel):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrow_dttm = models.DateTimeField(default=timezone.now)
     return_dttm = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} borrowed {self.book.book_name}"
@@ -46,6 +50,9 @@ class BorrowedBook(BaseModel):
             user=user,
             book=book,
             borrow_dttm=timezone.now(),
+            due_date=timezone.now() + timedelta(days=float(
+                os.getenv('EMAIL_DAYS')))
+
         )
         borrowed_book.save()
 

@@ -5,3 +5,5 @@ class Demoapp1Config(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'demoapp1'
 
+    def ready(self):
+        import demoapp1.signals

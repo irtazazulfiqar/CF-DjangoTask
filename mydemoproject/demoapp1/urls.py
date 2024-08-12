@@ -16,11 +16,13 @@ Including another URLconf
 """
 from django.contrib.auth.views import LogoutView
 from django.urls import path
-from .views.inventory import *
-from .views.book import *
-from .views.borrowed import *
-from .views.user import *
-from .views.signup_signin import *
+from .views.inventory import InventoryListView
+from .views.book import (BookCreateView,
+                         BookListView,BookUpdateView,
+                         BookDeleteView)
+from .views.borrowed import BorrowReturnView, BorrowedBookListView
+from .views.user import UserUpdateView, UserListView, UserDeleteView
+from .views.signup_signin import signup, signin
 
 urlpatterns = [
     path('signup/', signup, name='signup'),

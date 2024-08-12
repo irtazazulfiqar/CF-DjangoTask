@@ -14,7 +14,7 @@ def signup(request):
             return redirect('home')
     else:
         form = UserForm()
-    return render(request, 'demoapp1/auth_form.html', {'form': form,
+    return render(request, 'demoapp1/signup_signin.html', {'form': form,
                                                        'is_signup': True})
 
 
@@ -30,7 +30,7 @@ def signin(request):
                 return redirect('home')
     else:
         form = AuthenticationForm()
-    return render(request, 'demoapp1/auth_form.html', {'form': form,
+    return render(request, 'demoapp1/signup_signin.html', {'form': form,
                                                        'is_signup': False})
 
 
