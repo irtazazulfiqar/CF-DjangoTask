@@ -20,8 +20,6 @@ class Command(BaseCommand):
         for user in old_users:
             # Generate the token and uid
             token = PasswordResetTokenGenerator().make_token(user)
-            if user.email == 'irtazazulfiaar143@gmail.com':
-                print(token)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             reset_link = f"{settings.SITE_URL}{reverse('password_reset_confirm',
                                                        kwargs={'uidb64': uid, 'token': token})}"
@@ -71,5 +69,5 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'Password reset email sent'
                                                      f' to {user.email}'))
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f'Password reset email sent'
-                                                   f' to {user.email}'))
+                self.stdout.write(self.style.ERROR(f'Password reset email revoked'
+                                                   f' for {user.email}'))

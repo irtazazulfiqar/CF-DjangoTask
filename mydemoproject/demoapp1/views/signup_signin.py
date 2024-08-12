@@ -29,7 +29,7 @@ def signin(request):
 
             if user:
                 if user.role == 'olduser':
-                    form.add_error(None, 'You must register as a new-user first. '
+                    form.add_error(None, 'Register as a new-user. '
                                          'Please setup you password.')
                 else:
                     login(request, user)

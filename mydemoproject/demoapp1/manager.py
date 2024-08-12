@@ -17,13 +17,10 @@ class UserManager(BaseUserManager):
 
         # Assign group based on role
         if role == 'admin':
-            print("Role assigned to admmin")
-
             group = Group.objects.get(name='admin')
         elif role == 'olduser':
             group = Group.objects.get(name='olduser')
         else:
-            print("Role assigned to newusers")
             group = Group.objects.get(name='newuser')
 
         user.groups.add(group)
