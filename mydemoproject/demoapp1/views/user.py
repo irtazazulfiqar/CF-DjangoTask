@@ -46,4 +46,3 @@ class UserUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         context['object_type'] = 'User'
         context['edit_url'] = 'edit_user'
         return context
-

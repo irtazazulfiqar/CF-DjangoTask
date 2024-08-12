@@ -168,3 +168,11 @@ SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+
+# site url for sending reset-password email
+SITE_URL = 'http://127.0.0.1:8000'
+
+PASSWORD_RESET_TIMEOUT = 120
+
+
