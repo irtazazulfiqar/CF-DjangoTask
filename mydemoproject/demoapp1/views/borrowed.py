@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.views.generic import ListView, TemplateView
 from demoapp1.models.book import Book
 from demoapp1.models.inventory import Inventory
@@ -88,18 +89,27 @@ class UserBorrowedBooksView(PermissionRequiredMixin, LoginRequiredMixin, ListVie
         # Get filter parameters from the GET request
         author_name = self.request.GET.get('author_name')
         book_name = self.request.GET.get('book_name')
+        status = self.request.GET.get('status')
 
         # Apply filters based on provided parameters
         if author_name:
             queryset = queryset.filter(book__author_name__icontains=author_name)
         if book_name:
             queryset = queryset.filter(book__book_name__icontains=book_name)
+        if status:
+            if status == 'not_returned':
+                queryset = queryset.filter(return_dttm__isnull=True)
+            elif status == 'returned':
+                queryset = queryset.filter(return_dttm__isnull=False)
+            elif status == 'overdue':
+                queryset = queryset.filter(return_dttm__isnull=True,
+                                           due_date__lt=timezone.now())
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add context for authors
+        # Add context for authors and book names
         context['authors'] = Book.objects.values_list('author_name', flat=True).distinct()
         context['book_names'] = Book.objects.values_list('book_name', flat=True).distinct()
         return context

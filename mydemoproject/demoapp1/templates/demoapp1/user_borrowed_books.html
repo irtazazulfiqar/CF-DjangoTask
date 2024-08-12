@@ -26,6 +26,14 @@
             {% endfor %}
         </select>
 
+        <label for="status">Status:</label>
+        <select name="status" id="status">
+            <option value="">All</option>
+            <option value="not_returned" {% if request.GET.status == 'not_returned' %}selected{% endif %}>Not Returned</option>
+            <option value="returned" {% if request.GET.status == 'returned' %}selected{% endif %}>Returned</option>
+            <option value="overdue" {% if request.GET.status == 'overdue' %}selected{% endif %}>Overdue</option>
+        </select>
+
         <button type="submit">Filter</button>
     </form>
 

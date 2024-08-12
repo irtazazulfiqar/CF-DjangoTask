@@ -1,13 +1,11 @@
 from datetime import timedelta
-
 from .inventory import Inventory
 from django.db import models
 from django.utils import timezone
 from ._helper.base_model import BaseModel
 from .user import User
 from .book import Book
-import os
-
+from django.conf import settings
 
 
 class BorrowedBook(BaseModel):
@@ -51,8 +49,8 @@ class BorrowedBook(BaseModel):
             book=book,
             borrow_dttm=timezone.now(),
             due_date=timezone.now() + timedelta(days=float(
-                os.getenv('EMAIL_DAYS')))
-
+                settings.EMAIL_DAYS
+            ))
         )
         borrowed_book.save()
 

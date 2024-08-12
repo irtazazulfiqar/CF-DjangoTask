@@ -136,6 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # settings.py
 LOGIN_URL = '/signin/'
 
+EMAIL_DAYS = os.getenv('EMAIL_DAYS')
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -164,15 +165,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Email settings
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
-SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = '2525'
+
+# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+# EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 
 # site url for sending reset-password email
 SITE_URL = 'http://127.0.0.1:8000'
 
 PASSWORD_RESET_TIMEOUT = 120
-
 

@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.core.validators import MinValueValidator
 from ._helper.base_model import BaseModel

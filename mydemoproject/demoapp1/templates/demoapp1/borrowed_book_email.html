@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Borrowed Book Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Off-white background */
+            color: #333; /* Dark gray text color */
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #333;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        img {
+            width: 150px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Borrowed Book Confirmation</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ username }},</p>
+            <p>Thank you for borrowing "<strong>{{ book_name }}</strong>" by {{ author_name }}.</p>
+            <p>You need to return it by <strong>{{ due_date }}</strong>.</p>
+            <p>Best regards,<br>
+            Library Team</p>
+            <p><img src="https://feji.us/ngrv2f" alt="Library Logo"></p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Library Team. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

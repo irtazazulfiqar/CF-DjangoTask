@@ -2,15 +2,16 @@ import ssl
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.shortcuts import redirect
-from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 import random
-import sendgrid
-from sendgrid.helpers.mail import Mail
-from django.conf import settings
 from demoapp1.forms.otp_verification_form import OTPVerificationForm
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
+from django.conf import settings
+from demoapp1.models.user import User
 
 User = get_user_model()
 
@@ -78,20 +79,24 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
         # Load and render the HTML template
         html_content = render_to_string(
-            'otp_email_template.html', {
+            'demoapp1/otp_email_template.html', {
                 'username': user.username,
                 'otp': otp,
             })
 
-        # Send the email using SendGrid
-        sendgrid_client = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-        mail = Mail(
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to_emails=user.email,
+        # Create the plain text version of the email
+        plain_text_content = strip_tags(html_content)
+
+        # Send the email using Django’s send_mail function
+
+        send_mail(
             subject=email_subject,
-            html_content=html_content
+            message=plain_text_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            html_message=html_content
         )
-        sendgrid_client.send(mail)
+
 
     def get_user_from_uid(self, uidb64):
         try:
