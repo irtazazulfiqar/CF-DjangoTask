@@ -24,7 +24,8 @@ from .views.book import (BookCreateView,
 from .views.borrowed import (BorrowReturnView, BorrowedBookListView
                             , UserBorrowedBooksView)
 from .views.password_reset import CustomPasswordResetConfirmView
-from .views.user import UserUpdateView, UserListView, UserDeleteView
+from .views.user import (UserUpdateView, UserListView,
+                         UserDeleteView, UserAddView)
 
 from .views.signup_signin import signup, signin
 from django.contrib.auth import views as auth_views
@@ -46,6 +47,7 @@ urlpatterns = [
 
     # paths of users
     path('users/', UserListView.as_view(), name='show_user'),
+    path('users/add/', UserAddView.as_view(), name='add_user'),
     path('users/<int:user_id>/edit/', UserUpdateView.as_view(), name='edit_user'),
     path('users/<int:user_id>/delete/', UserDeleteView.as_view(), name='delete_user'),
 

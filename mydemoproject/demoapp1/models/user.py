@@ -18,7 +18,7 @@ class User(AbstractUser, BaseModel):
                               validators=[validate_email])
     phone_number = models.CharField(max_length=11, unique=True)
     username = models.CharField(max_length=100, blank=True, null=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="newuser")
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="user")
 
     USERNAME_FIELD = 'email'  # unique id
     REQUIRED_FIELDS = ['username', 'phone_number']
@@ -30,11 +30,11 @@ class User(AbstractUser, BaseModel):
 
     @classmethod
     def by_email(cls, email):
-        return cls.filter_objects(email=email).exists()
+        return cls.objects.filter(email=email).exists()
 
     @classmethod
     def by_phone(cls, phone_number):
-        return cls.filter_objects(phone_number=phone_number).exists()
+        return cls.objects.filter(phone_number=phone_number).exists()
 
     @classmethod
     def add_user(cls, email, phone_number, password=None, **extra_fields):
