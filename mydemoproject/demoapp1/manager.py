@@ -10,7 +10,6 @@ class UserManager(BaseUserManager):
         user = self.model(phone_number=phone_number, email=email, role=role, **extra_fields)
         if password:
             user.set_password(password)
-        user.save(using=self._db)
 
         # Remove all direct permissions from the user
         user.user_permissions.clear()
@@ -24,7 +23,7 @@ class UserManager(BaseUserManager):
             group = Group.objects.get(name='newuser')
 
         user.groups.add(group)
-        user.save()
+        user.save(using=self._db)
 
         return user
 
