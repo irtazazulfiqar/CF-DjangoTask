@@ -1,8 +1,9 @@
 from django.db import models
 from ._helper.base_model import BaseModel
+from ._helper.time_stamp import TimeStampedModel
 
 
-class Book(BaseModel):
+class Book(TimeStampedModel, BaseModel):
     book_id = models.AutoField(primary_key=True)
     book_name = models.CharField(max_length=45)
     author_name = models.CharField(max_length=45)
