@@ -5,6 +5,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from .models import BorrowedBook
+from .utils import send_email
 
 
 @receiver(post_save, sender=BorrowedBook)
@@ -22,13 +23,4 @@ def send_borrowed_book_email(sender, instance, created, **kwargs):
             'author_name': book.author_name,
             'due_date': due_date,
         })
-        text_content = strip_tags(html_content)
-
-        # Send email
-        send_mail(
-            subject,
-            text_content,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            html_message=html_content,
-        )
+        send_email(subject, user.email, html_content=html_content)
