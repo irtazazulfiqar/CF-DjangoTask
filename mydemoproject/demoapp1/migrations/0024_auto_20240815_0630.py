@@ -63,7 +63,8 @@ def create_new_groups_and_permissions(apps, schema_editor):
 
     # Assign permissions to groups
     user_group.permissions.add(view_book_user, view_borrowedbook_user, view_inventory)
-    admin_group.permissions.add(view_book_user, add_book, change_book, delete_book, view_borrowedbook_user, view_inventory)
+    admin_group.permissions.add(view_book_user, add_book, change_book, delete_book,
+                                view_borrowedbook_user, view_inventory)
 
 
 def remove_new_groups_and_permissions(apps, schema_editor):

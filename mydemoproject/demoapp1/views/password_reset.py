@@ -44,19 +44,19 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
         if new_password == confirm_password:
             user.set_password(new_password)
-            user.role = 'newuser'
+            user.role = 'user'
 
             # Remove user from all groups
             user.groups.clear()
 
             # Add user to the 'newuser' group
-            newuser_group = Group.objects.get(name='newuser')
+            newuser_group = Group.objects.get(name='user')
             user.groups.add(newuser_group)
 
             # Remove all permissions
             user.user_permissions.clear()
 
-            # Add permissions for 'newuser' group
+            # Add permissions for 'user' group
             for permission in newuser_group.permissions.all():
                 user.user_permissions.add(permission)
 
