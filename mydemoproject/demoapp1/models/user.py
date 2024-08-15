@@ -3,9 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_email
 from django.db import models
 from ._helper.base_model import BaseModel
+from ._helper.time_stamp import TimeStampedModel
 
 
-class User(AbstractUser, BaseModel):
+class User(AbstractUser, BaseModel, TimeStampedModel):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=45, unique=True,
                               validators=[validate_email])

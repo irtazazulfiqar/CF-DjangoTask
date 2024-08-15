@@ -7,10 +7,10 @@ from ._helper.base_model import BaseModel
 from .user import User
 from .book import Book
 import os
+from ._helper.time_stamp import TimeStampedModel
 
 
-
-class BorrowedBook(BaseModel):
+class BorrowedBook(TimeStampedModel, BaseModel):
     """
     If a user is deleted, their associated borrowed book entries with a null return date
     must also be deleted. This is to prevent data inconsistency where a user has borrowed
