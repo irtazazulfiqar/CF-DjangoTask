@@ -30,7 +30,8 @@ class BookListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_admin'] = self.request.user.role == 'admin'
-        context['base_template'] = 'basic.html' if self.request.user.role == 'admin' else 'base_user.html'
+        context['base_template'] = 'basic.html' \
+            if self.request.user.role == 'admin' else 'base_user.html'
 
         return context
 

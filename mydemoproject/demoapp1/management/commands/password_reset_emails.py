@@ -3,7 +3,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.template.loader import render_to_string
 from django.conf import settings
 from demoapp1.models.user import User
 from demoapp1.utils import send_email_with_context
