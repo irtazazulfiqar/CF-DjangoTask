@@ -64,7 +64,7 @@ class BorrowReturnView(PermissionRequiredMixin, TemplateView):
 
 class BorrowedBookListView(LoginRequiredMixin, ListView):
     model = BorrowedBook
-    template_name = 'demoapp1/borrowed_demo.html'
+    template_name = 'demoapp1/borrowed.html'
     context_object_name = 'borrowed_books'
     paginate_by = 2
 
