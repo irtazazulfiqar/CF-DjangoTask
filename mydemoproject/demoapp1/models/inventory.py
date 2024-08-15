@@ -2,9 +2,10 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from ._helper.base_model import BaseModel
 from .book import Book
+from ._helper.time_stamp import TimeStampedModel
 
 
-class Inventory(BaseModel):
+class Inventory(TimeStampedModel, BaseModel):
     inventory_id = models.AutoField(primary_key=True)
     total_books = models.IntegerField(validators=[MinValueValidator(0)], default=0)
     book = models.OneToOneField(Book, on_delete=models.CASCADE)

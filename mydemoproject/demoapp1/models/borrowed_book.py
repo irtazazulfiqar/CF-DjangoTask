@@ -1,14 +1,16 @@
 from datetime import timedelta
+
 from .inventory import Inventory
 from django.db import models
 from django.utils import timezone
 from ._helper.base_model import BaseModel
 from .user import User
 from .book import Book
-from django.conf import settings
+import os
+from ._helper.time_stamp import TimeStampedModel
 
 
-class BorrowedBook(BaseModel):
+class BorrowedBook(TimeStampedModel, BaseModel):
     """
     If a user is deleted, their associated borrowed book entries with a null return date
     must also be deleted. This is to prevent data inconsistency where a user has borrowed
@@ -49,8 +51,8 @@ class BorrowedBook(BaseModel):
             book=book,
             borrow_dttm=timezone.now(),
             due_date=timezone.now() + timedelta(days=float(
-                settings.EMAIL_DAYS
-            ))
+                os.getenv('EMAIL_DAYS')))
+
         )
         borrowed_book.save()
 
