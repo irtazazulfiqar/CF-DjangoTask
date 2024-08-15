@@ -28,15 +28,11 @@ def signin(request):
             user = authenticate(username=username, password=password)
 
             if user:
-                if user.role == 'olduser':
-                    form.add_error(None, 'Register as a new-user. '
-                                         'Please setup you password.')
+                login(request, user)
+                if user.role == 'admin':
+                    return redirect('home')
                 else:
-                    login(request, user)
-                    if user.role == 'admin':
-                        return redirect('home')
-                    else:
-                        return redirect('show_books')
+                    return redirect('show_books')
     else:
         form = AuthenticationForm()
     return render(request, 'demoapp1/signup_signin.html',

@@ -3,27 +3,23 @@ from django.contrib.auth.models import Group
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, phone_number, email=None, password=None, role='newuser', **extra_fields):
+    def create_user(self, phone_number, email=None, password=None, role='user', **extra_fields):
         if not phone_number:
             raise ValueError('The Phone number must be set')
         email = self.normalize_email(email)
         user = self.model(phone_number=phone_number, email=email, role=role, **extra_fields)
         if password:
             user.set_password(password)
-
-        # Remove all direct permissions from the user
-        user.user_permissions.clear()
+        user.save(using=self._db)
 
         # Assign group based on role
+        group = None
         if role == 'admin':
             group = Group.objects.get(name='admin')
-        elif role == 'olduser':
-            group = Group.objects.get(name='olduser')
-        else:
-            group = Group.objects.get(name='newuser')
+        elif role == 'user':
+            group = Group.objects.get(name='user')
 
         user.groups.add(group)
-        user.save(using=self._db)
 
         return user
 
