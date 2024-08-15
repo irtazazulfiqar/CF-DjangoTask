@@ -1,18 +1,18 @@
 import ssl
+import string
+
 from django.contrib.auth.models import Group
-from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetCompleteView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 import random
 from demoapp1.forms.otp_verification_form import OTPVerificationForm
-from django.template.loader import render_to_string
-from django.core.mail import send_mail
-from django.utils.html import strip_tags
-from django.conf import settings
+
 from demoapp1.models.user import User
-from demoapp1.utils import send_email
+from demoapp1.utils import send_email_with_context
+
 User = get_user_model()
 
 # Disable SSL verification for local development only
@@ -74,24 +74,21 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
         return super().get(request, *args, **kwargs)
 
-    def generate_otp(self):
-        return str(random.randint(100000, 999999))
+    def generate_otp(self, length=6):
+        """Generate a random OTP."""
+        otp = str(random.choices(string.digits, k=length))
+        return otp
 
     def send_otp_email(self, user, otp):
         email_subject = 'Your OTP for Password Reset'
 
-        # Load and render the HTML template
-        html_content = render_to_string(
-            'demoapp1/otp_email_template.html', {
-                'username': user.username,
-                'otp': otp,
-            })
-
-        send_email(
-            subject=email_subject,
-            to_email=user.email,
-            html_content=html_content,
-        )
+        success = send_email_with_context(email_subject, user.email,
+                                          'demoapp1/otp_email_template.html',
+                                          {
+                                              'username': user.username,
+                                              'otp': otp,
+                                          })
+        return success
 
     def get_user_from_uid(self, uidb64):
         try:
@@ -103,3 +100,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
     def handle_no_user(self):
         return redirect('password_reset')
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'demoapp1/signup_signin.html'

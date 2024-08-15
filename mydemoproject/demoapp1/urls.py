@@ -16,19 +16,20 @@ Including another URLconf
 """
 from django.contrib.auth.views import LogoutView
 from django.urls import path
-from .views.inventory import InventoryListView
-from .views.book import (BookCreateView,
-                         BookListView,BookUpdateView,
-                         BookDeleteView, UserBookListView,
-                         )
-from .views.borrowed import (BorrowReturnView, BorrowedBookListView
-                            , UserBorrowedBooksView)
-from .views.password_reset import CustomPasswordResetConfirmView
-from .views.user import (UserUpdateView, UserListView,
-                         UserDeleteView, UserAddView)
-
-from .views.signup_signin import signup, signin
 from django.contrib.auth import views as auth_views
+
+from demoapp1.views.book import (BookCreateView,
+                                 BookListView, BookUpdateView,
+                                 BookDeleteView,
+                                 )
+from demoapp1.views.borrowed import BorrowReturnView, BorrowedBookListView
+
+from demoapp1.views.inventory import InventoryListView
+from demoapp1.views.password_reset import (CustomPasswordResetConfirmView,
+                                           CustomPasswordResetCompleteView)
+from demoapp1.views.signup_signin import signup, signin
+from demoapp1.views.user import (UserUpdateView, UserListView,
+                                 UserDeleteView, UserAddView)
 
 
 urlpatterns = [
@@ -60,14 +61,12 @@ urlpatterns = [
     path('borrowed/', BorrowedBookListView.as_view(), name='show_borrowed'),
 
     # paths for user-specific views
-    path('user/books/', UserBookListView.as_view(), name='show_books'),
-    path('user/borrowed/', UserBorrowedBooksView.as_view(), name='show_borrowed_books'),
-
+    path('books/', BookListView.as_view(), name='show_books'),
+    path('user/borrowed/', BorrowedBookListView.as_view(), name='show_borrowed_books'),
 
     # Django's built-in password reset views
     path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     # this view is Overriden parent view = PasswordResetConfirmView
     path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 

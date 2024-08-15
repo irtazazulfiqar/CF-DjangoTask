@@ -12,10 +12,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from demoapp1.views.permissions_user import user_only
 
 
-class BaseBookListView(LoginRequiredMixin, ListView):
+class BookListView(LoginRequiredMixin, ListView):
     model = Book
     context_object_name = 'books'
     paginate_by = 2
+    template_name = 'demoapp1/books.html'  # Single template
 
     def get_queryset(self):
         queryset = Book.objects.select_related('inventory').order_by('book_id')
@@ -26,19 +27,12 @@ class BaseBookListView(LoginRequiredMixin, ListView):
             )
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_admin'] = self.request.user.role == 'admin'
+        context['base_template'] = 'basic.html' if self.request.user.role == 'admin' else 'base_user.html'
 
-# ListView for Books
-class BookListView(PermissionRequiredMixin, BaseBookListView):
-    template_name = 'demoapp1/books.html'
-    permission_required = 'demoapp1.view_book_admin'
-
-
-class UserBookListView(PermissionRequiredMixin, BaseBookListView):
-    template_name = 'demoapp1/book_list_user.html'
-    permission_required = 'demoapp1.view_book_newuser'
-
-    def dispatch(self, request, *args, **kwargs):
-        return user_only(super().dispatch)(request, *args, **kwargs)
+        return context
 
 
 # CreateView for User
@@ -51,7 +45,6 @@ class BookCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'demoapp1.add_book'
 
     def form_valid(self, form):
-
         book_name = form.cleaned_data.get("book_name")
         author_name = form.cleaned_data.get("author_name")
         quantity = self.request.POST.get('book_quantity')
@@ -72,7 +65,7 @@ class BookCreateView(PermissionRequiredMixin, CreateView):
 
 
 # UpdateView for Books
-class BookUpdateView(PermissionRequiredMixin,UpdateView):
+class BookUpdateView(PermissionRequiredMixin, UpdateView):
     model = Book
     fields = ['book_name', 'author_name']
     template_name = 'demoapp1/edit_form.html'
@@ -94,4 +87,3 @@ class BookDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('show_book')
     pk_url_kwarg = 'book_id'
     permission_required = 'demoapp1.delete_book'
-

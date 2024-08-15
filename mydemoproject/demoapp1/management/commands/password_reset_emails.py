@@ -6,7 +6,7 @@ from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
 from django.conf import settings
 from demoapp1.models.user import User
-from demoapp1.utils import send_email
+from demoapp1.utils import send_email_with_context
 from datetime import datetime
 from django.utils import timezone
 
@@ -52,7 +52,7 @@ class Command(BaseCommand):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             reset_link = f"{settings.SITE_URL}{reverse(
-                'password_reset_confirm', 
+                'password_reset_confirm',
                 kwargs={'uidb64': uid, 'token': token})}"
 
             # Render HTML content from template
@@ -60,12 +60,11 @@ class Command(BaseCommand):
                 'username': user.username,
                 'reset_link': reset_link
             }
-            html_content = render_to_string(
-                'demoapp1/password_reset_email.html', context)
 
-            # Send the email using the send_email function
-            success = send_email('Password Reset Request',
-                                 user.email, html_content)
+            success = send_email_with_context("Create Your Account", user.email,
+                                              'demoapp1/password_reset_email.html',
+                                              context)
+
             if success:
                 self.stdout.write(self.style.SUCCESS(f'Password reset email '
                                                      f'sent to {user.email}'))

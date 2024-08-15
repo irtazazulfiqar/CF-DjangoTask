@@ -8,8 +8,6 @@ from demoapp1.models.user import User
 from demoapp1.models.borrowed_book import BorrowedBook
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from demoapp1.views.permissions_user import user_only
-
 
 class BorrowReturnView(PermissionRequiredMixin, TemplateView):
     template_name = 'demoapp1/inventory.html'
@@ -63,35 +61,27 @@ class BorrowReturnView(PermissionRequiredMixin, TemplateView):
         return redirect('show_inventory')
 
 
-# ListView for Borrowed Books
-class BorrowedBookListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+
+class BorrowedBookListView(LoginRequiredMixin, ListView):
     model = BorrowedBook
-    template_name = 'demoapp1/borrowed.html'
+    template_name = 'demoapp1/borrowed_demo.html'
     context_object_name = 'borrowed_books'
-    permission_required = 'demoapp1.view_borrowedbook'
-
-
-# All the books borrowed by a user logged in
-
-class UserBorrowedBooksView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    model = BorrowedBook
-    template_name = 'demoapp1/user_borrowed_books.html'
-    context_object_name = 'borrowed_books'
-    permission_required = 'demoapp1.view_borrowedbook_newuser'
-
-    def dispatch(self, request, *args, **kwargs):
-        return user_only(super().dispatch)(request, *args, **kwargs)
+    paginate_by = 2
 
     def get_queryset(self):
-        # Base queryset for the logged-in user
-        queryset = BorrowedBook.objects.filter(user=self.request.user)
+        # Check if the logged-in user is an admin
+        if self.request.user.role == 'admin':
+            # Admin: View all borrowed books
+            queryset = BorrowedBook.objects.select_related('book', 'user').all()
+        else:
+            # Regular user: View only books borrowed by the logged-in user
+            queryset = BorrowedBook.objects.filter(user=self.request.user)
 
-        # Get filter parameters from the GET request
+        # Apply filters based on provided parameters
         author_name = self.request.GET.get('author_name')
         book_name = self.request.GET.get('book_name')
         status = self.request.GET.get('status')
 
-        # Apply filters based on provided parameters
         if author_name:
             queryset = queryset.filter(book__author_name__icontains=author_name)
         if book_name:
@@ -102,14 +92,15 @@ class UserBorrowedBooksView(PermissionRequiredMixin, LoginRequiredMixin, ListVie
             elif status == 'returned':
                 queryset = queryset.filter(return_dttm__isnull=False)
             elif status == 'overdue':
-                queryset = queryset.filter(return_dttm__isnull=True,
-                                           due_date__lt=timezone.now())
+                queryset = queryset.filter(return_dttm__isnull=True, due_date__lt=timezone.now())
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add context for authors and book names
+        # Add context for filters
         context['authors'] = Book.objects.values_list('author_name', flat=True).distinct()
         context['book_names'] = Book.objects.values_list('book_name', flat=True).distinct()
+        context['base_template'] = 'basic.html' if self.request.user.role == 'admin' else 'base_user.html'
+
         return context
