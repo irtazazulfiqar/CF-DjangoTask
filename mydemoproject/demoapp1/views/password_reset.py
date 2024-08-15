@@ -12,7 +12,7 @@ from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from django.conf import settings
 from demoapp1.models.user import User
-
+from demoapp1.utils import send_email
 User = get_user_model()
 
 # Disable SSL verification for local development only
@@ -87,17 +87,10 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
                 'otp': otp,
             })
 
-        # Create the plain text version of the email
-        plain_text_content = strip_tags(html_content)
-
-        # Send the email using Django’s send_mail function
-
-        send_mail(
+        send_email(
             subject=email_subject,
-            message=plain_text_content,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            html_message=html_content
+            to_email=user.email,
+            html_content=html_content,
         )
 
     def get_user_from_uid(self, uidb64):

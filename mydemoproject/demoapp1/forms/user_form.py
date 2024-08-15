@@ -14,7 +14,7 @@ class UserForm(UserCreationForm):
             email=self.cleaned_data['email'],
             username=self.cleaned_data['username'],
             password=self.cleaned_data['password1'],
-            role='newuser'  # Default role, or we can pass as needed
+            role='user'  # Default role, or we can pass as needed
         )
         if commit:
             user.save()
