@@ -1,0 +1,25 @@
+{% load static %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'common.css' %}">
+        <title>{% block title %}User Dashboard{% endblock %}</title>
+    </head>
+    <body>
+        <nav>
+            <a href="{% url 'show_books' %}">All Books</a>
+            <a href="{% url 'show_borrowed_books' %}">Borrowed Books</a>
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        </nav>
+
+        <section>
+            {% block content %}
+            {% endblock %}
+        </section>
+    </body>
+</html>

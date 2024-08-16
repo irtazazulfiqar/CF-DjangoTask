@@ -1,37 +1,77 @@
-{% extends "basic.html" %}
-
+{% extends base_template %}
 
 {% block content %}
+<section>
+    <h2>
+        {% if user.role == 'admin' %}
+            Manage Borrowed Books
+        {% else %}
+            My Borrowed Books
+        {% endif %}
+    </h2>
 
-    <head>
-        <title>Borrowed Books</title>
-    </head>
+    <!-- Search form -->
+    <form method="get" action="">
+        <label for="author_name">Author:</label>
+        <input type="text" id="author_name" name="author_name" placeholder="Author Name" value="{{ request.GET.author_name }}">
 
-    <section>
-        <h2>Borrowed Books</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>User Name</th>
-                    <th>Book Name</th>
-                    <th>Borrow Date</th>
-                    <th>Return Date</th>
-                    <th>Due Date</th>
+        <label for="book_name">Book Name:</label>
+        <input type="text" id="book_name" name="book_name" placeholder="Book Name" value="{{ request.GET.book_name }}">
 
-                </tr>
-            </thead>
-            <tbody>
-                {% for borrowed_book in borrowed_books %}
-                    <tr>
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="">All</option>
+            <option value="not_returned" {% if request.GET.status == 'not_returned' %}selected{% endif %}>Not Returned</option>
+            <option value="returned" {% if request.GET.status == 'returned' %}selected{% endif %}>Returned</option>
+            <option value="overdue" {% if request.GET.status == 'overdue' %}selected{% endif %}>Overdue</option>
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+
+    <!-- Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Author Name</th>
+                <th>Borrowed Date</th>
+                <th>Return Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                {% if user.role == 'admin' %}
+                    <th>User</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for borrowed_book in borrowed_books %}
+            <tr>
+                <td>{{ borrowed_book.book.book_id }}</td>
+                <td>{{ borrowed_book.book.book_name }}</td>
+                <td>{{ borrowed_book.book.author_name }}</td>
+                <td>{{ borrowed_book.borrow_dttm }}</td>
+                <td>{{ borrowed_book.return_dttm }}</td>
+                <td>{{ borrowed_book.due_date }}</td>
+                <td>
+                    {% if borrowed_book.return_dttm %}
+                        Returned
+                    {% else %}
+                        Not Returned
+                        {% if borrowed_book.due_date and borrowed_book.due_date < now %}
+                            (Overdue)
+                        {% endif %}
+                    {% endif %}
+                </td>
+                    {% if user.role == 'admin' %}
                         <td>{{ borrowed_book.user.username }}</td>
-                        <td>{{ borrowed_book.book.book_name }}</td>
-                        <td>{{ borrowed_book.borrow_dttm }}</td>
-                        <td>{{ borrowed_book.return_dttm }}</td>
-                        <td>{{ borrowed_book.due_date }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    </section>
+    {% include 'pagination.html' %}
+</section>
 {% endblock %}

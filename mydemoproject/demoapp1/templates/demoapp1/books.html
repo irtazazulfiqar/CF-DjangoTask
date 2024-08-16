@@ -1,11 +1,8 @@
-{% extends "basic.html" %}
+{% extends base_template %}
 
 {% block content %}
-<head>
-    <title>Books Page</title>
-</head>
 <section>
-    <h2>Manage Books</h2>
+    <h2>Books Page</h2>
 
     <!-- Display messages -->
     {% if messages %}
@@ -18,6 +15,9 @@
         </div>
     {% endif %}
 
+    <!-- Admin-specific content -->
+    {% if is_admin %}
+    <h3>Manage Books</h3>
     <form method="post" action="{% url 'add_book' %}">
         {% csrf_token %}
         <label for="bookname">Book Name:</label>
@@ -29,10 +29,11 @@
         <label for="quantity">Book Quantity:</label>
         <input type="number" id="quantity" name="book_quantity" placeholder="Quantity" required min="0">
 
-
         <button type="submit" id="addbook">Add Book</button>
     </form>
+    {% endif %}
 
+    <!-- Common content for both users and admin -->
     <table>
         <thead>
             <tr>
@@ -40,7 +41,9 @@
                 <th>Book Name</th>
                 <th>Author Name</th>
                 <th>Book Quantity</th>
+                {% if is_admin %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -50,6 +53,7 @@
                 <td>{{ book.book_name }}</td>
                 <td>{{ book.author_name }}</td>
                 <td>{{ book.inventory.total_books }}</td>
+                {% if is_admin %}
                 <td>
                     <form method="post" action="{% url 'delete_book' book.book_id %}" style="display:inline;">
                         {% csrf_token %}
@@ -59,9 +63,15 @@
                         <button type="submit">Edit</button>
                     </form>
                 </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="{% if is_admin %}5{% else %}4{% endif %}">No books found.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% include 'pagination.html' %}
 </section>
 {% endblock %}

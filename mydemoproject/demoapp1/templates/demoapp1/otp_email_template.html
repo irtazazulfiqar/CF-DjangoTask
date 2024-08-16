@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP for Password Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2C2C2C;
+            color: #F5F5F5;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #F5F5F5;
+        }
+        p {
+            color: #CCCCCC;
+        }
+        .otp {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #E0E0E0;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #AAAAAA;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OTP for Password Reset</h1>
+        <p>Dear {{ username }},</p>
+        <p>Your OTP for password reset is:</p>
+        <p class="otp">{{ otp }}</p>
+        <p>Please enter this OTP in the provided field to reset your password.</p>
+        <div class="footer">
+            <p>Best regards,</p>
+            <p>Library Team</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -3,14 +3,15 @@ from demoapp1.models.book import Book
 from demoapp1.models.inventory import Inventory
 from demoapp1.models.user import User
 from demoapp1.models.borrowed_book import BorrowedBook
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 # ListView for Inventory
-class InventoryListView(LoginRequiredMixin, ListView):
+class InventoryListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = Inventory
     template_name = 'demoapp1/inventory.html'
     context_object_name = 'inventory_with_borrowed'
+    permission_required = 'demoapp1.view_inventory'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

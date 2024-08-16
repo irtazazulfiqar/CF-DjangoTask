@@ -10,8 +10,9 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+
             # Redirect to home page after successful signup
-            return redirect('home')
+            return redirect('show_books')
     else:
         form = UserForm()
     return render(request, 'demoapp1/signup_signin.html', {'form': form,
@@ -25,12 +26,16 @@ def signin(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            if user is not None:
+
+            if user:
                 login(request, user)
-                return redirect('home')
+                if user.role == 'admin':
+                    return redirect('home')
+                else:
+                    return redirect('show_books')
     else:
         form = AuthenticationForm()
-    return render(request, 'demoapp1/signup_signin.html', {'form': form,
-                                                       'is_signup': False})
+    return render(request, 'demoapp1/signup_signin.html',
+                  {'form': form, 'is_signup': False})
 
 
